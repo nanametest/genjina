@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>源氏名メーカー</title>
+<meta name="description" content="3つの質問に自由に答えて、あなたの源氏名を決めよう！">
+<meta property="og:type" content="website">
+<meta property="og:title" content="源氏名メーカー">
+<meta property="og:description" content="3つの質問に自由に答えて、あなたの源氏名を決めよう！">
+<meta name="twitter:card" content="summary">
+<style>
+:root{--bg-top:#ffe4ef;--bg-mid:#fff1f5;--bg-bottom:#fffbeb;--card-bg:#fff;--primary:#ec4899;--primary-dark:#db2777;--primary-soft:#fce7f3;--border:#fbcfe8;--text:#292524;--muted:#78716c}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:"Hiragino Maru Gothic ProN","Yu Gothic","Meiryo",sans-serif;color:var(--text);background:linear-gradient(180deg,var(--bg-top) 0%,var(--bg-mid) 52%,var(--bg-bottom) 100%);padding:28px 16px 48px}
+.container{max-width:460px;margin:0 auto}
+.header{text-align:center;margin-bottom:22px}
+.badge{display:inline-block;background:rgba(255,255,255,.9);color:var(--primary);font-size:11px;font-weight:800;letter-spacing:.08em;padding:5px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(236,72,153,.12)}
+.title{margin:8px 0 4px;font-size:32px;font-weight:900;color:var(--primary-dark);letter-spacing:.02em}
+.subtitle{margin:0;font-size:13px;color:var(--muted)}
+.card{background:rgba(255,255,255,.96);border:2px solid var(--border);border-radius:26px;padding:22px;box-shadow:0 12px 28px rgba(236,72,153,.14)}
+.question-box{background:#fff5f8;border:1px solid #fce7f3;border-radius:18px;padding:14px;margin-bottom:16px}
+.question-label{display:block;font-size:14px;font-weight:700;line-height:1.6;margin-bottom:8px}
+.q-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;background:var(--primary);color:#fff;font-size:11px;font-weight:900;margin-right:6px;vertical-align:middle}
+.kw{display:inline-block;background:var(--primary-soft);color:var(--primary-dark);font-weight:900;padding:0 6px;border-radius:6px;margin:0 1px}
+.guide{margin:0 0 10px;padding:6px 10px;background:#fff;border-radius:10px;font-size:12px;color:var(--primary-dark);line-height:1.45}
+.answer-input{width:100%;padding:11px 14px;font-size:16px;font-family:inherit;color:var(--text);background:#fff;border:2px solid var(--border);border-radius:14px;outline:none;transition:border-color .15s,box-shadow .15s}
+.answer-input::placeholder{color:#d6d3d1;font-size:14px}
+.answer-input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(236,72,153,.14)}
+.role-box{background:#fffbeb;border:1px solid #fde68a;border-radius:18px;padding:14px;margin-bottom:20px}
+.role-title{display:block;font-size:14px;font-weight:800;color:var(--text);margin-bottom:10px}
+.role-grid{display:flex;flex-wrap:wrap;gap:8px}
+.role-chip{position:relative;cursor:pointer}
+.role-chip input{position:absolute;opacity:0;pointer-events:none}
+.role-chip span{display:inline-block;padding:7px 12px;font-size:13px;font-weight:700;color:#57534e;background:#fff;border:2px solid #f5d0fe;border-radius:999px;transition:all .14s ease}
+.role-chip input:checked+span{color:#fff;background:var(--primary);border-color:var(--primary);box-shadow:0 4px 10px rgba(236,72,153,.25)}
+.btn-primary{width:100%;padding:15px 18px;font-size:16px;font-weight:900;font-family:inherit;color:#fff;background:linear-gradient(90deg,#ec4899 0%,#fb7185 100%);border:none;border-radius:18px;cursor:pointer;box-shadow:0 6px 16px rgba(236,72,153,.3);transition:transform .12s,opacity .15s}
+.btn-primary:active:not(:disabled){transform:scale(.98)}
+.btn-primary:disabled{background:#d6d3d1;box-shadow:none;cursor:not-allowed}
+.result-card{text-align:center;padding:28px 22px}
+.result-lead{margin:0;font-size:12px;font-weight:800;letter-spacing:.12em;color:#f472b6}
+.result-name-box{margin:20px 0 24px;padding:32px 14px;border-radius:20px;border:2px dashed #f9a8d4;background:linear-gradient(135deg,#fdf2f8 0%,#fff 55%,#fefce8 100%)}
+.result-name{margin:0;font-size:42px;font-weight:900;color:var(--primary-dark);letter-spacing:.06em;word-break:keep-all}
+.btn-x{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;margin-bottom:12px;font-size:14px;font-weight:800;font-family:inherit;color:#fff;background:#1c1917;border:none;border-radius:16px;text-decoration:none;cursor:pointer;transition:background .15s,transform .12s}
+.btn-x:hover{background:#292524}.btn-x:active{transform:scale(.98)}
+.btn-retry{width:100%;padding:14px 18px;font-size:14px;font-weight:800;font-family:inherit;color:var(--primary-dark);background:#fdf2f8;border:2px solid var(--border);border-radius:16px;cursor:pointer;transition:background .15s,transform .12s}
+.btn-retry:hover{background:#fce7f3}.btn-retry:active{transform:scale(.98)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="container">
+<header class="header">
+<div class="badge">POP &amp; CUTE NAME GENERATOR</div>
+<h1 class="title">源氏名メーカー</h1>
+<p class="subtitle">3つの質問に自由に答えて、あなたの源氏名を決めよう！</p>
+</header>
+<form id="quiz-form" class="card" novalidate>
+<div id="questions-container"></div>
+<div class="role-box">
+<span class="role-title">どの職業でデビューする？（1つ選択）</span>
+<div id="roles-container" class="role-grid"></div>
+</div>
+<button id="submit-btn" type="submit" class="btn-primary" disabled>源氏名を決定する！</button>
+</form>
+<section id="result-view" class="card result-card hidden" aria-live="polite">
+<p class="result-lead">あなたの源氏名は…</p>
+<div class="result-name-box"><p id="result-name" class="result-name"></p></div>
+<a id="x-share-btn" class="btn-x" href="#" target="_blank" rel="noopener noreferrer">
+<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+Xで結果をシェアする
+</a>
+<button id="retry-btn" type="button" class="btn-retry">もう一度診断する</button>
+</section>
+</div>
+
+<script id="names-csv" type="text/csv">ID,名前,分類,レベル
+ID,名前,分類,レベル
+001,あめ,通常,0
+002,あられ,通常,0
+003,あんこ,通常,0
+004,あんみつ,通常,0
+005,いちご,通常,0
+006,うさ,通常,0
+007,うたたね,通常,0
+008,おしるこ,通常,0
+009,おだんご,通常,0
+010,おにぎり,通常,0
+011,おはぎ,通常,0
+012,かすてら,通常,0
+013,かぬれ,通常,0
+014,かぷちーの,通常,0
+015,きなこ,通常,0
+016,きゃらめる,通常,0
+017,きゃんでぃ,通常,0
+018,きらり,通常,0
+019,くっきー,通常,0
+020,くま,通常,0
+021,くりむ,通常,0
+022,ここあ,通常,0
+023,こっとん,通常,0
+024,こなゆき,通常,0
+025,こはく,通常,0
+026,こむぎ,通常,0
+027,こもれび,通常,0
+028,ころん,通常,0
+029,さくらもち,通常,0
+030,しずく,通常,0
+031,しふぉん,通常,0
+032,しろっぷ,通常,0
+033,すあま,通常,0
+034,すい,通常,0
+035,すこーん,通常,0
+036,すふれ,通常,0
+037,せとか,通常,0
+038,たぴ,通常,0
+039,たぴおか,通常,0
+040,ちょこ,通常,0
+041,ちろる,通常,0
+042,つき,通常,0
+043,つくね,通常,0
+044,てぃらみす,通常,0
+045,とまと,通常,0
+046,とろろ,通常,0
+047,どーなつ,通常,0
+048,なっつ,通常,0
+049,にまめ,通常,0
+050,にゃこ,通常,0
+051,にゃむ,通常,0
+052,ねこ,通常,0
+053,ねこめ,通常,0
+054,はちみつ,通常,0
+055,ぱふ,通常,0
+056,ぱふぇ,通常,0
+057,ぱる,通常,0
+058,ぱるむ,通常,0
+059,ぱん,通常,0
+060,ぴの,通常,0
+061,ぴよ,通常,0
+062,ぷに,通常,0
+063,ぷりん,通常,0
+064,ふわり,通常,0
+065,ほし,通常,0
+066,ぽてち,通常,0
+067,ぽてと,通常,0
+068,ぽむ,通常,0
+069,ぽめ,通常,0
+070,ぽよ,通常,0
+071,まかろん,通常,0
+072,ましゅ,通常,0
+073,まめ,通常,0
+074,まろ,通常,0
+075,まろん,通常,0
+076,みかん,通常,0
+077,みつ,通常,0
+078,みつまめ,通常,0
+079,みるく,通常,0
+080,むぎ,通常,0
+081,むに,通常,0
+082,むにゅ,通常,0
+083,めろん,通常,0
+084,めろんぱん,通常,0
+085,もぐ,通常,0
+086,もち,通常,0
+087,もなか,通常,0
+088,もふ,通常,0
+089,ゆきみ,通常,0
+090,ゆず,通常,0
+091,ゆめ,通常,0
+092,らて,通常,0
+093,らむね,通常,0
+094,りぼん,通常,0
+095,りんご,通常,0
+096,るる,通常,0
+097,るるあ,通常,0
+098,れもん,通常,0
+099,ろーず,通常,0
+100,ろーる,通常,0
+101,あい,通常,0
+102,あこ,通常,0
+103,あみ,通常,0
+104,あむ,通常,0
+105,あん,通常,0
+106,あんな,通常,0
+107,いお,通常,0
+108,うい,通常,0
+109,うにこ,通常,0
+110,うにゃ,通常,0
+111,うる,通常,0
+112,えな,通常,0
+113,えま,通常,0
+114,えむ,通常,0
+115,おと,通常,0
+116,かこ,通常,0
+117,きい,通常,0
+118,きこ,通常,0
+119,くう,通常,0
+120,くまこ,通常,0
+121,ここ,通常,0
+122,こねこ,通常,0
+123,こぺ,通常,0
+124,こゆ,通常,0
+125,ころね,通常,0
+126,さな,通常,0
+127,しあ,通常,0
+128,しお,通常,0
+129,しの,通常,0
+130,しゆ,通常,0
+131,すずり,通常,0
+132,せな,通常,0
+133,そあ,通常,0
+134,とあ,通常,0
+135,なぎ,通常,0
+136,なる,通常,0
+137,にこ,通常,0
+138,にこる,通常,0
+139,にゅあ,通常,0
+140,にゅん,通常,0
+141,ねね,通常,0
+142,のあ,通常,0
+143,のの,通常,0
+144,はな,通常,0
+145,はむ,通常,0
+146,はむこ,通常,0
+147,はむち,通常,0
+148,はむり,通常,0
+149,ぱんだ,通常,0
+150,ひな,通常,0
+151,ぴより,通常,0
+152,ふう,通常,0
+153,ぷく,通常,0
+154,ぷにこ,通常,0
+155,ぷにる,通常,0
+156,ぽより,通常,0
+157,ぽろん,通常,0
+158,まこ,通常,0
+159,ましろ,通常,0
+160,みあ,通常,0
+161,みう,通常,0
+162,みお,通常,0
+163,みおな,通常,0
+164,みこ,通常,0
+165,みな,通常,0
+166,みら,通常,0
+167,みり,通常,0
+168,みる,通常,0
+169,みれい,通常,0
+170,めい,通常,0
+171,める,通常,0
+172,もか,通常,0
+173,もこ,通常,0
+174,もな,通常,0
+175,もふこ,通常,0
+176,もふり,通常,0
+177,もも,通常,0
+178,ももん,通常,0
+179,ゆあ,通常,0
+180,ゆい,通常,0
+181,ゆな,通常,0
+182,ゆの,通常,0
+183,ゆら,通常,0
+184,よる,通常,0
+185,らら,通常,0
+186,りあ,通常,0
+187,りこ,通常,0
+188,りの,通常,0
+189,りり,通常,0
+190,りりあ,通常,0
+191,りん,通常,0
+192,るあ,通常,0
+193,るい,通常,0
+194,るか,通常,0
+195,るな,通常,0
+196,れあ,通常,0
+197,れい,通常,0
+198,れいな,通常,0
+199,れな,通常,0
+200,れみ,通常,0
+201,れむ,通常,0
+202,ろあ,通常,0
+203,あすか,通常,0
+204,あや,通常,0
+205,いと,通常,0
+206,うさぎ,通常,0
+207,うに,通常,0
+208,えくれあ,通常,0
+209,おこめ,通常,0
+210,おまめ,通常,0
+211,かなで,通常,0
+212,かのこ,通常,0
+213,かのん,通常,0
+214,かぼちゃ,通常,0
+215,かりん,通常,0
+216,かれん,通常,0
+217,ぎょうざ,通常,0
+218,きらら,通常,0
+219,くるみ,通常,0
+220,くれあ,通常,0
+221,くろみ,通常,0
+222,ここな,通常,0
+223,こはる,通常,0
+224,こまめ,通常,0
+225,こまり,通常,0
+226,こゆき,通常,0
+227,こんぺいとう,通常,0
+228,さとう,通常,0
+229,しおん,通常,0
+230,しゅうまい,通常,0
+231,しゅな,通常,0
+232,しゅり,通常,0
+233,しろね,通常,0
+234,すみれ,通常,0
+235,ずんだ,通常,0
+236,せいな,通常,0
+237,せりな,通常,0
+238,そふぃ,通常,0
+239,そぼろ,通常,0
+240,そらね,通常,0
+241,ちょこみ,通常,0
+242,つぶ,通常,0
+243,つむぎ,通常,0
+244,てぃあ,通常,0
+245,なぎさ,通常,0
+246,ななせ,通常,0
+247,にいな,通常,0
+248,のえる,通常,0
+249,ぱちぱち,通常,0
+250,ばにら,通常,0
+251,ぱるる,通常,0
+252,ぴすたちお,通常,0
+253,ひなた,通常,0
+254,ひまり,通常,0
+255,ひより,通常,0
+256,ぴりか,通常,0
+257,ふうか,通常,0
+258,ぷくり,通常,0
+259,ぷる,通常,0
+260,ぶるーべりー,通常,0
+261,ぺこ,通常,0
+262,ほのか,通常,0
+263,まいん,通常,0
+264,ましゅまろ,通常,0
+265,ましゅり,通常,0
+266,ましゅん,通常,0
+267,まなか,通常,0
+268,まめこ,通常,0
+269,みさき,通常,0
+270,みつき,通常,0
+271,みらい,通常,0
+272,みりあ,通常,0
+273,みるね,通常,0
+274,みるふぃーゆ,通常,0
+275,むにこ,通常,0
+276,めるな,通常,0
+277,もこも,通常,0
+278,もっち,通常,0
+279,もっちー,通常,0
+280,もなぴ,通常,0
+281,ももか,通常,0
+282,ももね,通常,0
+283,ゆいな,通常,0
+284,ゆうな,通常,0
+285,ゆずか,通常,0
+286,ゆずき,通常,0
+287,ゆずは,通常,0
+288,ゆに,通常,0
+289,ゆにこ,通常,0
+290,ゆば,通常,0
+291,ゆめみ,通常,0
+292,ゆりあ,通常,0
+293,らてぃ,通常,0
+294,りおな,通常,0
+295,りず,通常,0
+296,るちあ,通常,0
+297,るみ,通常,0
+298,ろっぷ,通常,0
+299,わらび,通常,0
+300,わんたん,通常,0
+301,あいみ,派生,1
+302,あおね,派生,1
+303,あかりん,派生,1
+304,あきゅ,派生,1
+305,あこり,派生,1
+306,あさな,派生,1
+307,あずみん,派生,1
+308,あまゆ,派生,1
+309,あみゅ,派生,1
+310,あやり,派生,1
+311,あゆり,派生,1
+312,あんみ,派生,1
+313,いおな,派生,1
+314,いちね,派生,1
+315,ういな,派生,1
+316,うたね,派生,1
+317,えまる,派生,1
+318,えみゅ,派生,1
+319,おとり,派生,1
+320,かのり,派生,1
+321,かほな,派生,1
+322,ここね,派生,1
+323,こはね,派生,1
+324,こむね,派生,1
+325,さくらね,派生,1
+326,しおね,派生,1
+327,しゅな,派生,1
+328,すずね,派生,1
+329,せなり,派生,1
+330,そらり,派生,1
+331,つきな,派生,1
+332,つむね,派生,1
+333,ななり,派生,1
+334,にこね,派生,1
+335,のあな,派生,1
+336,はなね,派生,1
+337,はるね,派生,1
+338,ひなり,派生,1
+339,ほのね,派生,1
+340,みおね,派生,1
+341,あいここ,派生,2
+342,あいもも,派生,2
+343,あおるな,派生,2
+344,あかりんご,派生,2
+345,あきゆあ,派生,2
+346,あこめる,派生,2
+347,あさゆめ,派生,2
+348,あずここ,派生,2
+349,あやもも,派生,2
+350,あゆるな,派生,2
+351,いちるな,派生,2
+352,うたここ,派生,2
+353,えまゆあ,派生,2
+354,おとるな,派生,2
+355,かのここ,派生,2
+356,かほめる,派生,2
+357,きらもも,派生,2
+358,くるゆあ,派生,2
+359,ここるな,派生,2
+360,こはもも,派生,2
+361,さきゆあ,派生,2
+362,さなここ,派生,2
+363,しおるな,派生,2
+364,すずもも,派生,2
+365,せなゆめ,派生,2
+366,そらここ,派生,2
+367,つきゆあ,派生,2
+368,つむもも,派生,2
+369,ななここ,派生,2
+370,なぎるな,派生,2
+371,にこもも,派生,2
+372,のあゆめ,派生,2
+373,はなここ,派生,2
+374,はるるな,派生,2
+375,ひなもも,派生,2
+376,ほのゆあ,派生,2
+377,まおここ,派生,2
+378,みおるな,派生,2
+379,ゆずもも,派生,2
+380,ゆめここ,派生,2
+381,あみゅか,派生,3
+382,あゆめる,派生,3
+383,いろみあ,派生,3
+384,うらみる,派生,3
+385,えにゃか,派生,3
+386,おとみゅ,派生,3
+387,かるみあ,派生,3
+388,きゅあな,派生,3
+389,くるみゅ,派生,3
+390,こねりあ,派生,3
+391,さゆめる,派生,3
+392,しぇりな,派生,3
+393,しゅあら,派生,3
+394,すみゅか,派生,3
+395,せるみあ,派生,3
+396,そにゃる,派生,3
+397,たゆらん,派生,3
+398,ちゅりあ,派生,3
+399,つきゅな,派生,3
+400,てぃあら,派生,3
+401,とろみあ,派生,3
+402,なゆめる,派生,3
+403,にゅりか,派生,3
+404,のあみゅ,派生,3
+405,はにゃる,派生,3
+406,ひゅめら,派生,3
+407,ふわりあ,派生,3
+408,ほしゅな,派生,3
+409,ましゅる,派生,3
+410,みゅあな,派生,3
+411,むにゃか,派生,3
+412,めろゆあ,派生,3
+413,もにゅか,派生,3
+414,ゆらみゅ,派生,3
+415,よるみあ,派生,3
+416,らみゅね,派生,3
+417,りゅあな,派生,3
+418,るみゅか,派生,3
+419,れにゃる,派生,3
+420,わゆめる,派生,3
+421,あぽにゃ,派生,4
+422,いちゅぽ,派生,4
+423,うにゃる,派生,4
+424,えびゅん,派生,4
+425,おむれあ,派生,4
+426,かぴゅる,派生,4
+427,きゃろめ,派生,4
+428,くぽりん,派生,4
+429,けろみゅ,派生,4
+430,こにゃぽ,派生,4
+431,さむにゃ,派生,4
+432,しゅぽら,派生,4
+433,すぴゅね,派生,4
+434,せろぽ,派生,4
+435,そにゅん,派生,4
+436,たまぴょ,派生,4
+437,ちょこる,派生,4
+438,つぴゃん,派生,4
+439,てろにゃ,派生,4
+440,とぴゅか,派生,4
+441,なむぽん,派生,4
+442,にゃぽる,派生,4
+443,ぬめりあ,派生,4
+444,ねむぴょ,派生,4
+445,のぴゅる,派生,4
+446,はむにゃ,派生,4
+447,ひょこら,派生,4
+448,ふにゅぽ,派生,4
+449,へにゃる,派生,4
+450,ほわぴん,派生,4
+451,ましゅぽ,派生,4
+452,みょこる,派生,4
+453,むぽにゃ,派生,4
+454,めぴゅら,派生,4
+455,もきゅん,派生,4
+456,やぽりん,派生,4
+457,ゆにゃぽ,派生,4
+458,らぴょる,派生,4
+459,りむぽん,派生,4
+460,れろにゃ,派生,4
+461,あにゅぽる,派生,5
+462,いみょらん,派生,5
+463,うぴゃにゅ,派生,5
+464,えむにゃぽ,派生,5
+465,おぽにゅる,派生,5
+466,かにょぴあ,派生,5
+467,きゅるぽん,派生,5
+468,くにゃみゅ,派生,5
+469,けぴょらん,派生,5
+470,こみゅにゃる,派生,5
+471,さぴゅにょ,派生,5
+472,しにょぽる,派生,5
+473,すみゃぽん,派生,5
+474,せぴょにゅ,派生,5
+475,そにゅぴら,派生,5
+476,たみょにゃる,派生,5
+477,ちゅぽみあ,派生,5
+478,つにゃぴょ,派生,5
+479,てぴゅらん,派生,5
+480,とみゃにゅる,派生,5
+481,なぴょみゅ,派生,5
+482,ぬにゅぽら,派生,5
+483,ねみょぴん,派生,5
+484,のきゅにゃる,派生,5
+485,はぴょみゅら,派生,5
+486,ひにゅぽん,派生,5
+487,ふみゃにょる,派生,5
+488,へぴゅにゃん,派生,5
+489,ほにょみゅら,派生,5
+490,まぴゅにょん,派生,5
+491,みょにゃぽる,派生,5
+492,むにゅぴょら,派生,5
+493,めきゅにゃぽ,派生,5
+494,もぴょるにゃ,派生,5
+495,やみゅにょる,派生,5
+496,ゆぴゃにゅん,派生,5
+497,らにょぴゅる,派生,5
+498,りみゃぽにゅ,派生,5
+499,れぴょにゃる,派生,5
+500,ろみゅにゃぽ,派生,5
+</script>
+<script>
+const DEBUT_ROLES=["アイドル","コンカフェ嬢","キャバ嬢","ガールズバー店員","VTuber","配信者","声優","モデル","看板娘","ゆるキャラ"];
+const QUESTION_MODIFIERS=["ぬれた","しかくい","さびた","まいごの","あまった","へんてこな","うその","つめたい","かたっぽだけの","うらがえしの","だまったままの","まちがえた","しめった","きいろくなった","ぎゃくまわりに動く","ちぐはぐな","おこってる","まよなかの","ぺちゃんこの","からっぽの","ざらざらの","かってに動く","ぐにゃぐにゃの","でっかい"];
+const QUESTION_NOUNS=["せんぷうき","わごむ","るすばんでんわ","じしゃく","きたかぜ","けしごむ","うわばき","はぶらし","けいこうとう","じゃり","ぽすと","まんほーる","わりばし","めざましどけい","やきそば","でんち","ぞうきん","がびょう","あきかん","かーてん","せっけん","てーぷ","すいどうかん","すいとう"];
+const QUESTION_TEMPLATES=[
+{s:s=>`${s}は、いま**なに**をしてる？`},
+{s:s=>`${s}をみつけたとき、**なん**て声をかける？`},
+{s:s=>`${s}は**どこ**からやってきたと思う？`},
+{s:s=>`${s}をとめるには、**どうやって**さわればいい？`},
+{s:s=>`${s}がいちばんこまってることは、**どれ**？`},
+{s:s=>`${s}が急に音をたてたのは、**なぜ**？`},
+{s:s=>`${s}のせわをしているのは、**だれ**？`,guide:"身のまわりのだれ？ 同級生や仲間のだれ？ 芸能人やキャラでいうとだれ？"},
+{s:s=>`${s}と一番なかよしになれそうなのは、**だれ**？`,guide:"身のまわりのだれ？ 同級生や仲間のだれ？ 芸能人やキャラでいうとだれ？"},
+{s:s=>`${s}をゆずってもらうのに、**いくら**出す？`}
+];
+function parseNamesCsv(text){return text.trim().split(/\r?\n/).slice(1).filter(x=>x.trim()).map(line=>{const [id,name,category,level]=line.split(",").map(v=>v.trim());return{id,name,category,level:Number(level)}})}
+function pickUniqueIndices(total,count){const set=new Set();while(set.size<count)set.add(Math.floor(Math.random()*total));return [...set]}
+function generateQuestions(){const m=pickUniqueIndices(QUESTION_MODIFIERS.length,3),n=pickUniqueIndices(QUESTION_NOUNS.length,3),t=pickUniqueIndices(QUESTION_TEMPLATES.length,3);return [0,1,2].map(i=>{const subject=QUESTION_MODIFIERS[m[i]]+QUESTION_NOUNS[n[i]],tpl=QUESTION_TEMPLATES[t[i]];return{text:tpl.s(subject),guide:tpl.guide||""}})}
+function appendHighlightedText(el,text){for(const part of text.split(/(\*\*[^*]+\*\*)/g)){if(part.startsWith("**")&&part.endsWith("**")){const span=document.createElement("span");span.className="kw";span.textContent=part.slice(2,-2);el.appendChild(span)}else if(part)el.appendChild(document.createTextNode(part))}}
+async function sha256Bytes(str){const bytes=new TextEncoder().encode(str.normalize("NFC"));return new Uint8Array(await crypto.subtle.digest("SHA-256",bytes))}
+async function decideGenjiname(questionTexts,answers,entries){const payload=[...questionTexts.map(q=>q.normalize("NFC")),"\x1e",...answers.map(a=>a.normalize("NFC"))].join("\x1f");const hash=await sha256Bytes(payload);let value64=0n;for(let i=0;i<8;i++)value64=(value64<<8n)|BigInt(hash[i]);const bucket=Number(value64%10000n);let sub64=0n;for(let i=8;i<16;i++)sub64=(sub64<<8n)|BigInt(hash[i]);if(bucket<6000){const pool=entries.filter(e=>e.category==="通常");return pool[Number(sub64%BigInt(pool.length))]}const level=Math.floor((bucket-6000)/800)+1;const pool=entries.filter(e=>e.category==="派生"&&e.level===level);return pool[Number(sub64%BigInt(pool.length))]}
+const entries=parseNamesCsv(document.getElementById("names-csv").textContent);
+const quizForm=document.getElementById("quiz-form"),questionsContainer=document.getElementById("questions-container"),rolesContainer=document.getElementById("roles-container"),submitBtn=document.getElementById("submit-btn"),resultView=document.getElementById("result-view"),resultNameEl=document.getElementById("result-name"),xShareBtn=document.getElementById("x-share-btn"),retryBtn=document.getElementById("retry-btn");
+let currentQuestions=[],inputEls=[],selectedRole="";
+function updateSubmitState(){submitBtn.disabled=!(inputEls.every(el=>el.value.trim())&&selectedRole)}
+function renderRoles(){rolesContainer.textContent="";DEBUT_ROLES.forEach((role,idx)=>{const label=document.createElement("label");label.className="role-chip";const radio=document.createElement("input");radio.type="radio";radio.name="debut-role";radio.value=role;radio.id=`role-${idx}`;radio.addEventListener("change",()=>{selectedRole=role;updateSubmitState()});const span=document.createElement("span");span.textContent=role;label.append(radio,span);rolesContainer.appendChild(label)})}
+function renderQuestions(){currentQuestions=generateQuestions();questionsContainer.textContent="";inputEls=[];currentQuestions.forEach((q,idx)=>{const box=document.createElement("div");box.className="question-box";const label=document.createElement("label");label.className="question-label";label.htmlFor=`q-input-${idx}`;const badge=document.createElement("span");badge.className="q-num";badge.textContent=`Q${idx+1}`;label.appendChild(badge);appendHighlightedText(label,q.text);box.appendChild(label);if(q.guide){const guide=document.createElement("p");guide.className="guide";guide.textContent="💡 "+q.guide;box.appendChild(guide)}const input=document.createElement("input");input.id=`q-input-${idx}`;input.type="text";input.className="answer-input";input.placeholder="思ったことを自由に入力してね";input.required=true;input.addEventListener("input",updateSubmitState);box.appendChild(input);questionsContainer.appendChild(box);inputEls.push(input)});updateSubmitState()}
+quizForm.addEventListener("submit",async e=>{e.preventDefault();if(submitBtn.disabled)return;const answers=inputEls.map(el=>el.value),questionTexts=currentQuestions.map(q=>q.text);submitBtn.disabled=true;submitBtn.textContent="決定中...";try{const decided=await decideGenjiname(questionTexts,answers,entries);resultNameEl.textContent=decided.name;const tweetText=`あなたは『${decided.name}』として${selectedRole}デビュー！\n#源氏名メーカー`;const params=new URLSearchParams({text:tweetText,url:window.location.href});xShareBtn.href=`https://x.com/intent/tweet?${params}`;quizForm.classList.add("hidden");resultView.classList.remove("hidden")}finally{submitBtn.textContent="源氏名を決定する！";updateSubmitState()}});
+retryBtn.addEventListener("click",()=>{resultView.classList.add("hidden");quizForm.classList.remove("hidden");selectedRole="";renderQuestions();renderRoles()});
+renderQuestions();renderRoles();
+</script>
+</body>
+</html>
